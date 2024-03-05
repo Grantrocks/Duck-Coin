@@ -1,0 +1,1 @@
+1=Failed TXID Unlock - Verify That you have the correct info submitted

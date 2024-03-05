@@ -1,0 +1,13 @@
+{
+    "header":{
+        "version":0,
+        "hash":"",
+        "height":0,
+        "last_block_hash":"",
+        "merkle_root":"",
+        "time":0,
+        "target":"",
+        "nonce":0
+    },
+    "transactions":[]
+}
