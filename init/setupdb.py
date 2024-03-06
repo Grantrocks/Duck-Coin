@@ -1,9 +1,17 @@
 import sqlite3
 import json
-con = sqlite3.connect("blocks/blockchain.db")
-cur = con.cursor()
-cur.execute("CREATE TABLE blocks(blockHeight integer NOT NULL,blockHash text NOT NULL,header text NOT NULL,transactions text NOT NULL)")
-con.commit()
+import hashlib
+#con = sqlite3.connect("blocks/blockchain.db")
+#cur = con.cursor()
+#cur.execute("CREATE TABLE blocks(blockHeight integer NOT NULL,blockHash text NOT NULL,header text NOT NULL,transactions text NOT NULL)")
+#con.commit()
 
-cur.execute("INSERT INTO blocks VALUES (0,'asdfasdf','"+json.dumps({"headerstuff":112})+"','"+json.dumps([{"txid":"asdfasdfasdf"},{"txid":"asdfasdfasdfasdfasdf"},{"txid":"asdfasdfasdfasdfasdfasdfasdfasdf"}])+"')")
-con.commit()
+#cur.execute("INSERT INTO blocks VALUES (0,'asdfasdf','"+json.dumps({"headerstuff":112})+"','"+json.dumps([{"txid":"asdfasdfasdf"},{"txid":"asdfasdfasdfasdfasdf"},{"txid":"asdfasdfasdfasdfasdfasdfasdfasdf"}])+"')")
+#con.commit()
+
+txcon=sqlite3.connect("txqueue.db")
+txcur=txcon.cursor()
+txcur.execute("CREATE TABLE txs(id text NOT NULL,json text NOT NULL)")
+txcon.commit()
+txcur.close()
+txcon.close()

@@ -1,9 +1,9 @@
 {
-    "version":0,
     "inputCount":0,
     "inputs":[],
     "outputCount":0,
     "outputs":[],
-    "locktime":0,
-    "txid":""
+    "created":0,
+    "locktime":0//added while being put into block,
+    "txid":""//added while being put into block
 }

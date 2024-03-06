@@ -8,3 +8,10 @@ tx pool.
 
 Locktime
  -All blocks will become spendable in 10 blocks
+
+
+ SigTX Parameter Is Set as the following
+ [["signature","txid"]]
+
+ Quacks To Ducks
+- calculation is 10^8

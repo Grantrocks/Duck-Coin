@@ -1,6 +1,6 @@
 import sqlite3
 import json
-
+import hashlib
 def fetchTransaction(txID,blockHeight=0):
     con = sqlite3.connect("blocks/blockchain.db")
     cur = con.cursor()
@@ -9,6 +9,37 @@ def fetchTransaction(txID,blockHeight=0):
         transactions=json.loads(block[3])
         for transaction in transactions:
             if transaction['txid']==txID:
+                cur.close()
+                con.close()
                 return transaction
+    cur.close()
+    con.close()
     return None
-    #for block in blocks:
+def fetchLatestBlockData():
+    f=open("cache_data.json")
+    data=json.load(f)
+    f.close()
+    blockHeight=data['blockHeight']
+    con=sqlite3.connect("blocks/blockchain.db")
+    cur=con.cursor()
+    block=cur.execute("SELECT * FROM blocks WHERE blockHeight="+str(blockHeight)).fetchone()
+    cur.close()
+    con.close()
+    if block:
+        return block
+    return False
+def fetchAllBlocks():
+    con=sqlite3.connect("blocks/blockchain.db")
+    cur=con.cursor()
+    blocks=cur.execute("SELECT * FROM blocks").fetchall()
+    cur.close()
+    con.close()
+    return blocks
+def addToTransQueue(transaction:str):
+    con=sqlite3.connect("txpool.db")
+    cur=con.cursor()
+    cur.execute("INSERT INTO txs VALUES ('"+hashlib.sha1(transaction.encode()).hexdigest()+"','"+transaction+"')")
+    con.commit()
+    cur.close()
+    con.close()
+    return True
