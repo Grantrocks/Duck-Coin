@@ -41,6 +41,8 @@ def inWallet(walletClass):
         print("Dasboard")
         print("Enter a command to do something")
         command=input("-->")
+        os.system('cls' if os.name == 'nt' else 'clear')
+
 while True:
     print("Duck Coin Wallet V1.0")
     print()
@@ -64,4 +66,5 @@ while True:
         wallet.pub=tempDetails[0]
         wallet.addr=tempDetails[1]
         inWallet(wallet)
+    os.system('cls' if os.name == 'nt' else 'clear')
 
