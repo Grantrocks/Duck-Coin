@@ -167,7 +167,6 @@ def createBlock(blockCreator):
     cacheF=open("cache_data.json")
     cache=json.load(cacheF)
     cacheF.close()
-    #lastBlock=dbManager.fetchBlockData(cache['blockHeight']-1)
     transactions=[]
     transactionsHASHES=[]
     coinbaseTX=coinbaseTransaction(blockCreator)
@@ -186,13 +185,16 @@ def createBlock(blockCreator):
     if cache['blockHeight']!=0:
         cur_block=json.loads(dbManager.fetchBlockData(cache['blockHeight'])[2])['header']
         cur_block=cur_block['time']
-        old_block=json.loads(dbManager.fetchBlockData(cache['blockHeight']-1)[2])['header']['time']
-        quotient=cur_block/old_block
+        old_block=json.loads(dbManager.fetchBlockData(cache['blockHeight']-1)[2])['header']
+        quotient=cur_block/old_block['time']
         target=calculate_new_target_hash(cur_block['target'],quotient)
+        lastHash=old_block['hash']
+    else:
+        lastHash=""
     header={
             "version":config['version'],
             "height":cache["blockHeight"],
-            "last_block_hash":"",
+            "last_block_hash":lastHash,
             "merkle_root":merkle_root,
             "time":datetime.datetime.now().timestamp(),
             "target":target
