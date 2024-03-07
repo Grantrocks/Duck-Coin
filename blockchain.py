@@ -199,4 +199,3 @@ def createBlock(blockCreator):
         }
     block=Block(header,transactions)
     return vars(block)
-#block=createBlock("ASpdmX74XUJwdxFdrJbBMb3j3vgswmLk9q")
