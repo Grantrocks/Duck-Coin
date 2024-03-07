@@ -139,19 +139,19 @@ def createTransaction(pubKey:str,recipient:str,outputSelect:int,SigTX:list,amoun
         for output in tx['outputs']:
             totalAvalAmount+=output['value']
         inp=Input(out=outputSelect,txid=temptxID,scriptSig={"pubKey":pubKey,"signature":signature})
-        txJSON=json.loads(vars(inp))
+        txJSON=vars(inp)
         inputs.append(txJSON)
     outputs=[]
     out=OutPut(value=amount,scriptPubKey=recipient)
-    outputs.append(json.loads(vars(out)))
+    outputs.append(vars(out))
     remaining=totalAvalAmount-amount
     if remaining<0:
         return 2
     if remaining>0:
         remainingOut=OutPut(value=remaining,scriptPubKey=generateAddressFromPubkey(pubKey))
-        outputs.append(json.loads(vars(remainingOut)))
+        outputs.append(vars(remainingOut))
     transaction=Transaction(inputCount=len(inputs),inputs=inputs,outputCount=len(outputs),outputs=outputs,created=datetime.datetime.now().timestamp())
-    return json.loads(vars(transaction))
+    return vars(transaction)
 
 
 def coinbaseTransaction(recipient:str):
