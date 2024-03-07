@@ -7,7 +7,7 @@ tx pool.
 
 
 Locktime
- -All blocks will become spendable in 10 blocks
+ -All blocks will become spendable in 2 blocks
 
 
  SigTX Parameter Is Set as the following
@@ -15,3 +15,6 @@ Locktime
 
  Quacks To Ducks
 - calculation is 10^8
+
+Diff Adjustment
+    - Calculated by (new block/old block)= diff adj multiplier

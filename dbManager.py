@@ -36,10 +36,33 @@ def fetchAllBlocks():
     con.close()
     return blocks
 def addToTransQueue(transaction:str):
-    con=sqlite3.connect("txpool.db")
+    con=sqlite3.connect("txqueue.db")
     cur=con.cursor()
     cur.execute("INSERT INTO txs VALUES ('"+hashlib.sha1(transaction.encode()).hexdigest()+"','"+transaction+"')")
     con.commit()
     cur.close()
     con.close()
     return True
+def fetchTransQueue():
+    con=sqlite3.connect("txqueue.db")
+    cur=con.cursor()
+    txs=cur.execute("SELECT * FROM txs").fetchall()
+    cur.close()
+    con.close()
+    return txs
+def fetchBlockData(blockID):
+    method=None
+    if type(blockID)==type("str"):
+        method="blockHash"
+        blockID=f"'{blockID}'"
+    elif type(blockID)==type(0):
+        method="blockHeight"
+        blockID=f"{blockID}"
+    else:
+        return False
+    con=sqlite3.connect("blocks/blockchain.db")
+    cur=con.cursor()
+    block=cur.execute("SELECT * FROM blocks WHERE "+method+"="+blockID).fetchone()
+    cur.close()
+    con.close()
+    return block
