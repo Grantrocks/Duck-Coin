@@ -157,21 +157,21 @@ def createTransaction(pubKey:str,recipient:str,outputSelect:int,SigTX:list,amoun
 def coinbaseTransaction(recipient:str):
     input={"txid":"","scriptSig":{"pubKey":"COINBASE","signature":"2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it."}}
     out=OutPut(500000000,recipient)
-    transaction=Transaction(inputCount=1,outputCount=1,inputs=[input],outputs=[json.loads(vars(out))],created=datetime.datetime.now().timestamp())
-    return json.loads(vars(transaction))
+    transaction=Transaction(inputCount=1,outputCount=1,inputs=[input],outputs=[vars(out)],created=datetime.datetime.now().timestamp())
+    return vars(transaction)
 
 def createBlock(blockCreator):
     configF=open("permConfig.json")
-    config=json.load(config)
+    config=json.load(configF)
     configF.close()
     cacheF=open("cache_data.json")
     cache=json.load(cacheF)
     cacheF.close()
-    lastBlock=dbManager.fetchBlockData(config['blockHeight']-1)
+    #lastBlock=dbManager.fetchBlockData(cache['blockHeight']-1)
     transactions=[]
     transactionsHASHES=[]
     coinbaseTX=coinbaseTransaction(blockCreator)
-    coinbaseTX['locktime']=config["blockHeight"]+2
+    coinbaseTX['locktime']=cache["blockHeight"]+2
     coinbaseTX['txid']=hashlib.sha3_256(json.dumps(coinbaseTX).encode()).hexdigest()
     transactions.append(coinbaseTX)
     for tx in dbManager.fetchTransQueue():
@@ -183,7 +183,7 @@ def createBlock(blockCreator):
         transactionsHASHES.append(tx['txid'])
     merkle_root=merkle_root_hash(transactionsHASHES)
     target=config['startDiff']
-    if config['blockHeight']!=0:
+    if cache['blockHeight']!=0:
         cur_block=json.loads(dbManager.fetchBlockData(cache['blockHeight'])[2])['header']
         cur_block=cur_block['time']
         old_block=json.loads(dbManager.fetchBlockData(cache['blockHeight']-1)[2])['header']['time']
@@ -191,12 +191,12 @@ def createBlock(blockCreator):
         target=calculate_new_target_hash(cur_block['target'],quotient)
     header={
             "version":config['version'],
-            "hash":"",
             "height":cache["blockHeight"],
-            "last_block_hash":lastBlock["hash"],
+            "last_block_hash":"",
             "merkle_root":merkle_root,
             "time":datetime.datetime.now().timestamp(),
-            "target":target,
-            "nonce":0
+            "target":target
         }
-    
+    block=Block(header,transactions)
+    return vars(block)
+#block=createBlock("ASpdmX74XUJwdxFdrJbBMb3j3vgswmLk9q")
