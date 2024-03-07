@@ -35,14 +35,20 @@ def loadWallet(pk):
 
 
 def inWallet(walletClass):
+    os.system('cls' if os.name == 'nt' else 'clear')
     while True:
         print("Duck Coin Wallet V1.0")
         print("")
         print("Dasboard")
         print("Enter a command to do something")
-        command=input("-->")
+        command=input("-->").lower()
         os.system('cls' if os.name == 'nt' else 'clear')
-
+        if command=="help":
+            print("Commands")
+            print("DETAILS - PRINTS WALLET DETAILS SUCH AS PUBKEY AND ADDRESS")
+        elif command=="details":
+            print("Address: "+walletClass.addr)
+            print("Public Key: "+wallet.pub)
 while True:
     print("Duck Coin Wallet V1.0")
     print()
@@ -60,6 +66,12 @@ while True:
         inWallet(wallet)
     elif command=="2":
         pk=generateWallet()
+        print("STORE THE FOLLOWING KEY. KEEP IT IN A SAFE PLACE. IF IT GETS LOST YOU WILL NO LONGER HAVE ACCESS TO YOUR WALLET. IF IT GETS STOLEN WELL THERE GOES YOUR COINS. IT WILL BE ONLY SHOWN ONCE!")
+        input("ENTER TO CONTINUE")
+        print()
+        print(pk)
+        print()
+        input()
         tempDetails=loadWallet(pk)
         wallet=Wallet
         wallet.pk=pk
