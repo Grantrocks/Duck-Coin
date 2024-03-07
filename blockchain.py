@@ -186,7 +186,7 @@ def createBlock(blockCreator):
         cur_block=json.loads(dbManager.fetchBlockData(cache['blockHeight'])[2])['header']
         cur_block=cur_block['time']
         old_block=json.loads(dbManager.fetchBlockData(cache['blockHeight']-1)[2])['header']
-        quotient=(cur_block-old_block['time'])/500
+        quotient=(cur_block-old_block['time'])/300
         target=calculate_new_target_hash(cur_block['target'],quotient)
         lastHash=old_block['hash']
     else:
