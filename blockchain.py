@@ -21,9 +21,10 @@ print("Done")
 # Classes
 
 class Block:
-    def __init__(self,header:json,transactions:list):
+    def __init__(self,header:json,transactions:list,dbIDS:list):
         self.header=header
         self.transactions=transactions
+        self.dbIDS=dbIDS
 
 class Transaction:
     def __init__(self,inputCount:int,inputs:list,outputCount:int,outputs:list,created:int):
@@ -171,13 +172,15 @@ def createBlock(blockCreator):
     transactionsHASHES=[]
     coinbaseTX=coinbaseTransaction(blockCreator)
     coinbaseTX['locktime']=cache["blockHeight"]+2
-    coinbaseTX['txid']=hashlib.sha3_256(json.dumps(coinbaseTX).encode()).hexdigest()
+    coinbaseTX['txid']=hashlib.sha3_256(hashlib.sha3_256(json.dumps(coinbaseTX).encode())).hexdigest()
     transactions.append(coinbaseTX)
+    dbIDS=[]
     for tx in dbManager.fetchTransQueue():
         txJSON=json.loads(tx[1])
         txJSON['locktime']=config['blockHeight']+2
-        txJSON['txid']=hashlib.sha3_256(json.dumps(txJSON).encode()).hexdigest()
+        txJSON['txid']=hashlib.sha3_256(hashlib.sha3_256(json.dumps(txJSON).encode())).hexdigest()
         transactions.append(txJSON)
+        dbIDS.append(tx[0])
     for tx in transactions:
         transactionsHASHES.append(tx['txid'])
     merkle_root=merkle_root_hash(transactionsHASHES)
@@ -199,5 +202,6 @@ def createBlock(blockCreator):
             "time":datetime.datetime.now().timestamp(),
             "target":target
         }
-    block=Block(header,transactions)
+    block=Block(header,transactions,dbIDS)
     return vars(block)
+def validateBlock(nonce,hash,blockheight)
