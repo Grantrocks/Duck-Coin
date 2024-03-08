@@ -204,4 +204,5 @@ def createBlock(blockCreator):
         }
     block=Block(header,transactions,dbIDS)
     return vars(block)
-def validateBlock(nonce,hash,blockheight)
+def validateBlock(nonce,hash,blockheight):
+    print()

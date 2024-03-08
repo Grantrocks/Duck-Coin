@@ -1,10 +1,10 @@
-# import socket programming library
 import socket
-
-# import thread module
+import hashlib
+import json
 from _thread import *
 import threading
-
+import blockchain
+import dbManager
 print_lock = threading.Lock()
 
 # thread function
@@ -17,9 +17,21 @@ def threaded(c):
 			break
 		data=data.decode().split(",")
 		# Handle Messages from client
-		if data=="PING":
+		cmd=data[0]
+		if cmd=="PING":
+			# Command: PING
 			c.send("PONG".encode())
-
+		elif cmd=="fetchBlock":
+			# Command: fetchBlock, BlockHash
+			block=dbManager.fetchBlockData(data[1])
+			block={"header":json.loads(block[2]),"transactions":json.loads(block[3])}
+			c.send(json.dumps(block).encode())
+		elif cmd=="fetchTransaction":
+			# Command: fetchTransaction, TXID
+			tx=dbManager.fetchTransaction(data[1])
+			c.send(json.dumps(tx).encode())
+		else:
+			c.send("Please specify a command".encode())
 	c.close()
 
 

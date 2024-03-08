@@ -1,0 +1,3 @@
+PING - Pings the node and the node will respond with PONG as fast as possible | PING
+fetchBlock - Fetches the specified block data | fetchBlock BLOCKHASH
+fetchTransaction - Fetches the specified transaciton data | fetchTransaction TRANSACTION
