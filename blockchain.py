@@ -217,9 +217,7 @@ def getCandidateBlock(creator=""):
         return candidate
     else:
         return candidate
-def validateBlock(nonce,hash):
-    f=open("candidate.json")
-    candidate=json.load(f)
+def validateBlock(candidate,nonce,hash):
     checkHash=hashlib.sha3_256(hashlib.sha3_256(f"{json.dumps(candidate['header'])}{str(nonce)}".encode()).hexdigest().encode()).hexdigest()
     if hash!=checkHash:
         return False
@@ -232,3 +230,10 @@ def validateBlock(nonce,hash):
         if not candidate['header']['time']>prev['time']:
             return False
     return True
+def addBlock(hash,nonce,nextBlockCreator):
+    f=open("candidate.json")
+    candidate=json.load(f)
+    f.close()
+    if not validateBlock(candidate,hash,nonce):
+        return False
+    
