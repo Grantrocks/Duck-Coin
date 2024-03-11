@@ -38,7 +38,12 @@ def threaded(c):
 			else:
 				c.send(json.dumps({"err":0}))
 		elif cmd=="getCandidateBlock":
-			
+			#Command: getCandidateBlock, creator (if no candidate block make one with creator addr)
+			if data[1]:
+				block=blockchain.getCandidateBlock(data[1])
+			else:
+				block=blockchain.getCandidateBlock()
+			return block
 		else:
 			c.send("Please specify a command".encode())
 	c.close()

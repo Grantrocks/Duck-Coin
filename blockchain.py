@@ -157,7 +157,7 @@ def createTransaction(pubKey:str,recipient:str,SigTX:list,amount:int):
     return dbManager.addToTransQueue(json.dumps(vars(transaction)))
     
 def coinbaseTransaction(recipient:str):
-    input={"txid":"","scriptSig":{"pubKey":"COINBASE","signature":"2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it."}}
+    input={"txid":"","scriptSig":{"pubKey":"COINBASE","signature":"waddle"}}
     out=OutPut(500000000,recipient)
     transaction=Transaction(inputCount=1,outputCount=1,inputs=[input],outputs=[vars(out)],created=datetime.datetime.now().timestamp())
     return vars(transaction)
@@ -194,7 +194,7 @@ def createBlock(blockCreator):
         target=calculate_new_target_hash(cur_block['target'],quotient)
         lastHash=old_block['hash']
     else:
-        lastHash=""
+        lastHash="2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it."
     header={
             "version":config['version'],
             "height":cache["blockHeight"],
@@ -205,5 +205,17 @@ def createBlock(blockCreator):
         }
     block=Block(header,transactions,dbIDS)
     return vars(block)
+def getCandidateBlock(creator=""):
+    f=open("candidate.json")
+    candidate=json.load(f)
+    f.close()
+    if candidate['header']['txid']=="noc":
+        candidate=createBlock(creator)
+        f=open("candidate.json","w")
+        json.dump(candidate,f)
+        f.close()
+        return candidate
+    else:
+        return candidate
 def validateBlock(nonce,hash,blockheight):
     print()
