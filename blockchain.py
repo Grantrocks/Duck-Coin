@@ -209,7 +209,7 @@ def getCandidateBlock(creator=""):
     f=open("candidate.json")
     candidate=json.load(f)
     f.close()
-    if candidate['header']['txid']=="2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it.":
+    if candidate['header']['last_block_hash']=="2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it.":
         candidate=createBlock(creator)
         f=open("candidate.json","w")
         json.dump(candidate,f)

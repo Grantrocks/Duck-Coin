@@ -36,14 +36,14 @@ def threaded(c):
 			if type(tx)==type(0):
 				c.send(json.dumps({"err":tx}).encode())
 			else:
-				c.send(json.dumps({"err":0}))
+				c.send(json.dumps({"err":0}).encode())
 		elif cmd=="getCandidateBlock":
 			#Command: getCandidateBlock, creator (if no candidate block make one with creator addr)
 			if data[1]:
 				block=blockchain.getCandidateBlock(data[1])
 			else:
 				block=blockchain.getCandidateBlock()
-			return block
+			c.send(json.dumps(block).encode())
 		else:
 			c.send("Please specify a command".encode())
 	c.close()
@@ -51,7 +51,7 @@ def threaded(c):
 
 def Main():
 	host = ""
-	port = 20001 # Specify which port to open
+	port = 20000 # Specify which port to open
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.bind((host, port))
 	print("socket binded to port", port)
