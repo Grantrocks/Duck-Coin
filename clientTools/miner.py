@@ -11,6 +11,6 @@ while True:
     print(h1)
     h2=hashlib.sha3_256(h1.encode()).hexdigest()
     hash=int(h2,16)
-    if hash<target:
+    if hash<=target:
         break
     nonce+=1

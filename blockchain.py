@@ -217,5 +217,18 @@ def getCandidateBlock(creator=""):
         return candidate
     else:
         return candidate
-def validateBlock(nonce,hash,blockheight):
-    print()
+def validateBlock(nonce,hash):
+    f=open("candidate.json")
+    candidate=json.load(f)
+    checkHash=hashlib.sha3_256(hashlib.sha3_256(f"{json.dumps(candidate['header'])}{str(nonce)}".encode()).hexdigest().encode()).hexdigest()
+    if hash!=checkHash:
+        return False
+    targ=int(candidate['header']['target'],16)
+    incheck=int(checkHash,16)
+    if not incheck<=targ:
+        return False
+    if candidate['header']['height']!=0:
+        prev=json.loads(dbManager.fetchBlockData(candidate['header']['height'])[2])
+        if not candidate['header']['time']>prev['time']:
+            return False
+    return True
