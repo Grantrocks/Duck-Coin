@@ -51,7 +51,7 @@ def threaded(c):
 
 def Main():
 	host = ""
-	port = 20000 # Specify which port to open
+	port = 20001 # Specify which port to open
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.bind((host, port))
 	print("socket binded to port", port)

@@ -173,7 +173,7 @@ def createBlock(blockCreator):
     transactionsHASHES=[]
     coinbaseTX=coinbaseTransaction(blockCreator)
     coinbaseTX['locktime']=cache["blockHeight"]+2
-    coinbaseTX['txid']=hashlib.sha3_256(hashlib.sha3_256(json.dumps(coinbaseTX).encode())).hexdigest()
+    coinbaseTX['txid']=hashlib.sha3_256(hashlib.sha3_256(json.dumps(coinbaseTX).encode()).hexdigest().encode()).hexdigest()
     transactions.append(coinbaseTX)
     dbIDS=[]
     for tx in dbManager.fetchTransQueue():
@@ -209,7 +209,7 @@ def getCandidateBlock(creator=""):
     f=open("candidate.json")
     candidate=json.load(f)
     f.close()
-    if candidate['header']['txid']=="noc":
+    if candidate['header']['txid']=="2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it.":
         candidate=createBlock(creator)
         f=open("candidate.json","w")
         json.dump(candidate,f)

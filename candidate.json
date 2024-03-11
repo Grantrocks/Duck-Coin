@@ -1,3 +1,1 @@
-{
-    "header":{"txid":"noc"}
-}
+{"header": {"version": 0, "height": 0, "last_block_hash": "2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it.", "merkle_root": "537e5856e039efc3cad3197530646c436eb989f2ae4c1440482bd63e366db93f", "time": 1710160627.990983, "target": "0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"}, "transactions": [{"inputCount": 1, "inputs": [{"txid": "", "scriptSig": {"pubKey": "COINBASE", "signature": "waddle"}}], "outputCount": 1, "outputs": [{"value": 500000000, "scriptPubKey": "ANuF9s1wvhcR5SiGGedZNnaiXsdUUAt9eq"}], "created": 1710160627.985381, "locktime": 2, "txid": "537e5856e039efc3cad3197530646c436eb989f2ae4c1440482bd63e366db93f"}], "dbIDS": []}
