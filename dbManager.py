@@ -70,4 +70,5 @@ def removeFromTransQueue(dbIDS):
     con=sqlite3.connect("databases/txqueue.db")
     cur=con.cursor()
     for dbID in dbIDS:
-        cur.execute("")
+        cur.execute("DELETE FROM txs WHERE id='"+dbID+"'")
+    return True

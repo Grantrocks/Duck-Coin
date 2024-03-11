@@ -120,26 +120,28 @@ def verifyTXOwnership(pubKey:str,signature:str,outputSelect:int,txID:str,txJSON:
     vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(pubKey[2:]), curve=ecdsa.SECP256k1, hashfunc=hashlib.sha3_256)
     return vk.verify(bytes.fromhex(signature), txID.encode())
 
-def createTransaction(pubKey:str,recipient:str,outputSelect:int,SigTX:list,amount:int):
+def createTransaction(pubKey:str,recipient:str,SigTX:list,amount:int):
     txDataList=[]
     txidList=[]
     for txID in SigTX:
+        signature=txID[0]
+        output=txID[2]
         txID=txID[1]
         txidList.append(txID)
         signature=txID[0]
         tx=dbManager.fetchTransaction(txID)
-        txDataList.append(txDataList)
-        if not verifyTXOwnership(pubKey,signature,outputSelect,txID,tx):
+        txDataList.append([tx,output])
+        if not verifyTXOwnership(pubKey,signature,output,txID,tx):
             return 1
     verifyIfOwnerCanSend=verifyUnspentsGetBalance(txids=txidList,senderaddr=generateAddressFromPubkey(pubKey),pubKey=pubKey)
     print(verifyIfOwnerCanSend)
     inputs=[]
     totalAvalAmount=0
     for tx in txDataList:
-        temptxID=tx['txid']
-        for output in tx['outputs']:
+        temptxID=tx[0]['txid']
+        for output in tx[0]['outputs']:
             totalAvalAmount+=output['value']
-        inp=Input(out=outputSelect,txid=temptxID,scriptSig={"pubKey":pubKey,"signature":signature})
+        inp=Input(out=tx[1],txid=temptxID,scriptSig={"pubKey":pubKey,"signature":signature})
         txJSON=vars(inp)
         inputs.append(txJSON)
     outputs=[]

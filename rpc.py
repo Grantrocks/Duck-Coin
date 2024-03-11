@@ -30,6 +30,13 @@ def threaded(c):
 			# Command: fetchTransaction, TXID
 			tx=dbManager.fetchTransaction(data[1])
 			c.send(json.dumps(tx).encode())
+		elif cmd=="createTransaction":
+			# Command: createTransaction, pubKey (senders public key), recipient(reciver hashed pubkey), SigTX(["signature","txID",outputSelect]), amount (amount to send in quacks)
+			tx=blockchain.createTransaction(data[1],data[2],data[3],data[4])
+			if type(tx)==type(0):
+				c.send(("ERR "+str(tx)).encode())
+			else:
+				c.send(json.dumps(tx).encode())
 		else:
 			c.send("Please specify a command".encode())
 	c.close()
