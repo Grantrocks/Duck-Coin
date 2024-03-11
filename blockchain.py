@@ -155,7 +155,7 @@ def createTransaction(pubKey:str,recipient:str,SigTX:list,amount:int):
         outputs.append(vars(remainingOut))
     transaction=Transaction(inputCount=len(inputs),inputs=inputs,outputCount=len(outputs),outputs=outputs,created=datetime.datetime.now().timestamp())
     return vars(transaction)
-
+def verifyTxForQueue(txJSON):
 
 def coinbaseTransaction(recipient:str):
     input={"txid":"","scriptSig":{"pubKey":"COINBASE","signature":"2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it."}}
