@@ -153,10 +153,9 @@ def createTransaction(pubKey:str,recipient:str,SigTX:list,amount:int):
     if remaining>0:
         remainingOut=OutPut(value=remaining,scriptPubKey=generateAddressFromPubkey(pubKey))
         outputs.append(vars(remainingOut))
-    transaction=Transaction(inputCount=len(inputs),inputs=inputs,outputCount=len(outputs),outputs=outputs,created=datetime.datetime.now().timestamp())
-    return vars(transaction)
-def verifyTxForQueue(txJSON):
-
+    transaction=Transaction(inputCount=len(inputs),inputs=inputs,outputCount=len(outputs),outputs=outputs,created=datetime.datetime.now().timestamp())    
+    return dbManager.addToTransQueue(json.dumps(vars(transaction)))
+    
 def coinbaseTransaction(recipient:str):
     input={"txid":"","scriptSig":{"pubKey":"COINBASE","signature":"2024 March 7 And Duino Coin is at risk of shutting down. Due to this I created this currency to try and replace it."}}
     out=OutPut(500000000,recipient)
