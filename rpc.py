@@ -44,6 +44,15 @@ def threaded(c):
 			else:
 				block=blockchain.getCandidateBlock()
 			c.send(json.dumps(block).encode())
+		elif cmd=="addBlock":
+			# Command: addBlock, hash, nonce, nextBlockCreator
+			hash=data[1]
+			nonce=data[2]
+			nextBlockCreator=data[3]
+			added=blockchain.addBlock(hash,nonce,nextBlockCreator)
+			if not added:
+				c.send("INVALID".encode())
+			c.send("VALID".encode())
 		else:
 			c.send("Please specify a command".encode())
 	c.close()

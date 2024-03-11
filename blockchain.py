@@ -13,7 +13,10 @@ blocks=dbManager.fetchAllBlocks()
 f=open("cache_data.json")
 data=json.load(f)
 f.close()
-data['blockHeight']=blocks[-1][0]
+if len(blocks)!=0:
+  data['blockHeight']=blocks[-1][0]
+else:
+  data['blockHeight']=0
 f=open("cache_data.json","w")
 json.dump(data,f,indent=6)
 f.close()
@@ -236,4 +239,11 @@ def addBlock(hash,nonce,nextBlockCreator):
     f.close()
     if not validateBlock(candidate,hash,nonce):
         return False
-    
+    added=dbManager.appendBlock(json.dumps(candidate))
+    if not added:
+        return False
+    candidate=createBlock(nextBlockCreator)
+    f=open("candidate.json","w")
+    json.dump(candidate,f)
+    f.close()
+    return True

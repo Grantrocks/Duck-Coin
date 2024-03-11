@@ -71,6 +71,7 @@ def removeFromTransQueue(dbIDS):
     cur=con.cursor()
     for dbID in dbIDS:
         cur.execute("DELETE FROM txs WHERE id='"+dbID+"'")
+    con.commit()
     cur.close()
     con.close()
     return True
@@ -81,4 +82,9 @@ def appendBlock(block):
     transactions=json.dumps(block['transactions'])
     con=sqlite3.connect("database/blockchain.db")
     cur=con.cursor()
-    cur.execute("INSERT INTO ")
+    cur.execute("INSERT INTO blocks VALUES ("+str(blockHeight)+",'"+blockHash+"','"+header+"','"+transactions+"')")
+    con.commit()
+    cur.close()
+    con.close()
+    return True
+  
