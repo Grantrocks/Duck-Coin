@@ -4,7 +4,6 @@
     "outputCount":0,
     "outputs":[],
     "created":0,
-    "spent":false,
     "locktime":0,//added while being put into block,
     "txid":""//added while being put into bloc
 }

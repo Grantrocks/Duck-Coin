@@ -15,7 +15,7 @@ def threaded(c):
 			print('Closed Connection')
 			print_lock.release()
 			break
-		data=data.decode().split(",")
+		data=data.decode().split("~")
 		# Handle Messages from client
 		cmd=data[0]
 		if cmd=="PING":
@@ -38,18 +38,14 @@ def threaded(c):
 			else:
 				c.send(json.dumps({"err":0}).encode())
 		elif cmd=="getCandidateBlock":
-			#Command: getCandidateBlock, creator (if no candidate block make one with creator addr)
-			if data[1]:
-				block=blockchain.getCandidateBlock(data[1])
-			else:
-				block=blockchain.getCandidateBlock()
+			#Command: getCandidateBlock, creator (your address)
+			block=blockchain.getCandidateBlock(data[1])
 			c.send(json.dumps(block).encode())
 		elif cmd=="addBlock":
 			# Command: addBlock, hash, nonce, nextBlockCreator
-			hash=data[1]
-			nonce=data[2]
-			nextBlockCreator=data[3]
-			added=blockchain.addBlock(hash,nonce,nextBlockCreator)
+			block=json.loads(data[1])
+			nextBlockCreator=data[2]
+			added=blockchain.addBlock(block,nextBlockCreator)
 			if not added:
 				c.send("INVALID".encode())
 			c.send("VALID".encode())
@@ -60,7 +56,7 @@ def threaded(c):
 
 def Main():
 	host = ""
-	port = 20000 # Specify which port to open
+	port = 20021 # Specify which port to open
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.bind((host, port))
 	print("socket binded to port", port)

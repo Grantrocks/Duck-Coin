@@ -80,11 +80,17 @@ def appendBlock(block):
     blockHash=block['header']['hash']
     header=json.dumps(block['header'])
     transactions=json.dumps(block['transactions'])
-    con=sqlite3.connect("database/blockchain.db")
+    con=sqlite3.connect("databases/blockchain.db")
     cur=con.cursor()
     cur.execute("INSERT INTO blocks VALUES ("+str(blockHeight)+",'"+blockHash+"','"+header+"','"+transactions+"')")
     con.commit()
     cur.close()
     con.close()
     return True
-  
+def fetchDbIDS():
+    con=sqlite3.connect("databases/txqueue.db")
+    cur=con.cursor()
+    dbIDS=cur.execute("SELECT id FROM txs").fetchall()
+    cur.close()
+    con.close()
+    return dbIDS

@@ -1,4 +1,5 @@
 {
-    "startDiff":"000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-    "version":0
+    "startDiff":"00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "version":0,
+    "lockTime":2
 }
