@@ -8,8 +8,6 @@ import datetime
 # Initialization
 print("Initializing node....")
 
-
-
 print("Done")
 # Classes
 
