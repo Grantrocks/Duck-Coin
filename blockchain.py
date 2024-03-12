@@ -35,9 +35,6 @@ class OutPut:
 				self.value=value
 				self.scriptPubKey=scriptPubKey
 
-
-	
-
 # Functions
 def merkle_root_hash(data):
 		if len(data) == 1:
