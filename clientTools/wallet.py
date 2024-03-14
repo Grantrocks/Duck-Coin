@@ -4,6 +4,7 @@ import hashlib
 import base58
 import os
 import codecs
+import socket
 import json
 class Wallet:
     pk=None
@@ -48,7 +49,27 @@ def inWallet(walletClass):
             print("DETAILS - PRINTS WALLET DETAILS SUCH AS PUBKEY AND ADDRESS")
         elif command=="details":
             print("Address: "+walletClass.addr)
-            print("Public Key: "+wallet.pub)
+            print("Public Key: "+walletClass.pub)
+        elif command=="send":
+            amount=int(float(input("Amount: "))*(10**8))
+            to=input("To: ")
+            inpamt=int(input("How many inputs? "))
+            inputs=""
+            for i in range(inpamt):
+              txid=input("TX To Spend: ")
+              output=int(input("Output Select: "))
+              priv=ecdsa.SigningKey.from_string(bytes().fromhex(walletClass.pk),curve=ecdsa.SECP256k1,hashfunc=hashlib.sha3_256)
+              sig=priv.sign(txid.encode()).hex()
+              inputs+=f"['{sig}','{txid}',{str(output)}],"
+            pub=walletClass.pub
+            HOST = "0.0.0.0"  # The server's hostname or IP address
+            PORT = 20024 # The port used by the server
+            s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((HOST, PORT))
+            s.sendall(f"createTransaction~{pub}~{to}~[{inputs}]~{str(amount)}".encode())
+            data = s.recv(1024).decode()
+            print(data)
+            s.close()
 while True:
     print("Duck Coin Wallet V1.0")
     print()
