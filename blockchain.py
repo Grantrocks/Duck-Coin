@@ -37,6 +37,25 @@ class OutPut:
         self.scriptPubKey=scriptPubKey
 
 # Functions
+def getBalance(pubKey):
+  blocks=dbManager.fetchAllBlocks()
+  balance=0
+  for block in blocks:
+      TXLST=json.loads(block[3])
+      for tx in TXLST:
+          sending=False
+          print(tx)
+          for inp in tx['inputs']:
+              if inp['scriptSig']["pubKey"]==pubKey:
+                  sending=True
+          for out in tx['outputs']:
+              if not sending:
+                  if out['scriptPubKey']==generateAddressFromPubkey(pubKey):
+                      balance+=out['value']
+              elif sending:
+                  if out['scriptPubKey']!=generateAddressFromPubkey(pubKey):
+                      balance-=out['value']
+  return balance
 def merkle_root_hash(data):
     if len(data) == 1:
         return data[0]
@@ -74,24 +93,13 @@ def calculate_new_target_hash(old_target_hash, quotient):
 def verifyUnspentsGetBalance(txids:list,senderaddr:str,senderPubKey:str):
     blocks=dbManager.fetchAllBlocks()
     spent=[]
-    balance=0
     for block in blocks:
         TXLST=json.loads(block[3])
         for tx in TXLST:
-            sending=False
             for inp in tx['inputs']:
-                if inp['scriptSig']["pubKey"]==senderPubKey:
-                    sending=True
                 if inp['txid'] in txids:
                     spent.append(inp['txid'])
-            for out in tx['outputs']:
-                if not sending:
-                    if out['scriptPubKey']==senderaddr:
-                        balance+=out['value']
-                if sending:
-                    if out['scriptPubKey']!=senderaddr:
-                        balance-=out['value']
-    return [spent,balance]
+    return [spent]
 
 def verifyTXOwnership(pubKey:str,signature:str,outputSelect:int,txID:str,txJSON):
     transaction=txJSON
@@ -139,9 +147,6 @@ def createTransaction(pubKey:str,recipient:str,SigTX:list,amount:int):
         if not verifyTXOwnership(pubKey,signature,output,txIDS,tx):
             return 1
     verifyIfOwnerCanSend=verifyUnspentsGetBalance(txids=txidList,senderaddr=generateAddressFromPubkey(pubKey),senderPubKey=pubKey)
-    balance=verifyIfOwnerCanSend[1]
-    if amount>balance:
-      return 3
     if len(verifyIfOwnerCanSend[0])!=0:
       return 4
     inMemPool=checkIfTxNotInMemPool(txOUTHASHLIST)

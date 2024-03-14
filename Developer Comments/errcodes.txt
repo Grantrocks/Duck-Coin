@@ -1,3 +1,6 @@
 0=No error, just want to make sure all var types are sent the same
 1=Failed TXID Unlock - Verify That you have the correct info submitted and that the transactions locktime has expired.
 2=Not enought balance available.
+4=This transaction has already been spent
+5=Transaction already exists in the memory pool
+6=You tried to send quack to yourself

@@ -6,7 +6,7 @@ import threading
 import blockchain
 import dbManager
 import ast
-print_lock = threading.Lock()
+
 def convertGBtoByte(size):
   gb = size * (1024 * 1024 * 1024)
   return gb
@@ -16,7 +16,6 @@ def threaded(c):
     data = c.recv(convertGBtoByte(1))
     if not data:
       print('Closed Connection')
-      print_lock.release()
       break
     data=data.decode().split("~")
     # Handle Messages from client
@@ -32,6 +31,10 @@ def threaded(c):
     elif cmd=="fetchTransaction":
       # Command: fetchTransaction, TXID
       tx=dbManager.fetchTransaction(data[1])
+      c.send(json.dumps(tx).encode())
+    elif cmd=="getTransactionsByPubKey":
+      # Command: getTransactionsByPubKey, PubKey
+      tx=dbManager.fetchTransactionsByPubKey(data[1],blockchain.generateAddressFromPubkey(data[1]))
       c.send(json.dumps(tx).encode())
     elif cmd=="createTransaction":
       # Command: createTransaction, pubKey (senders public key), recipient(reciver hashed pubkey), SigTX(["signature","txID",outputSelect]), amount (amount to send in quacks)
@@ -52,6 +55,10 @@ def threaded(c):
       if not added:
         c.send("INVALID".encode())
       c.send("VALID".encode())
+    elif cmd=="getBalance":
+      # Command: getBalance, pubkey
+      balance=blockchain.getBalance(data[1])
+      return c.send(str(balance).encode())
     else:
       c.send("Please specify a command".encode())
   c.close()
@@ -71,7 +78,6 @@ def Main():
 
     c, addr = s.accept()
 
-    print_lock.acquire()
     print('Connected to :', addr[0], ':', addr[1])
 
     start_new_thread(threaded, (c,))

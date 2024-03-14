@@ -66,6 +66,21 @@ def fetchBlockData(blockID):
     cur.close()
     con.close()
     return block
+def fetchTransactionsByPubKey(pubKey,addr):
+  blocks=fetchAllBlocks()
+  transactions=[]
+  for block in blocks:
+    for tx in json.loads(block[3]):
+      for inp in tx['inputs']:
+        if inp['scriptSig']['pubKey']==pubKey:
+          transactions.append(tx)
+          continue
+      for out in tx['outputs']:
+        if out['scriptPubKey']==addr:
+          transactions.append(tx)
+          continue
+  print(transactions)
+  return transactions
 def removeFromTransQueue(dbIDS):
     con=sqlite3.connect("databases/txqueue.db")
     cur=con.cursor()

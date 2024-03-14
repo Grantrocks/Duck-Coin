@@ -1,18 +1,24 @@
 import hashlib
 import json
 import socket
+import datetime
 def convertGBtoByte(size):
   gb = size * (1024 * 1024 * 1024)
   return gb
 def convertBlockJSON(block):
   return f"{str(block['version'])}{str(block['height'])}{block['last_block_hash']}{block['merkle_root']}{str(block['time'])}{block['target']}"
-HOST = "0.0.0.0"  # The server's hostname or IP address
-PORT = 20024 # The port used by the server
-s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
+def sendCommand(command):
+  HOST = "0.0.0.0"  # The server's hostname or IP address
+  PORT = 20024 # The port used by the server
+  s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((HOST, PORT))
+  s.sendall(command.encode())
+  data=s.recv(convertGBtoByte(1)).decode()
+  s.close()
+  return data
+address=input("Address: ")
 while True:
-  s.sendall(b"getCandidateBlock~Ac1GBVhkt8kFhaTeXHy1ifYjMQPBwQeWUs")
-  data = s.recv(convertGBtoByte(1)).decode()
+  data = sendCommand("getCandidateBlock~"+address)
   block=json.loads(data)
   print(f"Mining: {convertBlockJSON(block['header'])}")
   nonce=0
@@ -28,10 +34,9 @@ while True:
       if hash<=target:
           break
       nonce+=1
-    
   block['header']['hash']=hashstr
   block['header']['nonce']=nonce
   print("Found Block: "+hashstr)
-  s.sendall(("addBlock~"+json.dumps(block)+"~ANuF9s1wvhcR5SiGGedZNnaiXsdUUAt9eq").encode())
-  data=s.recv(convertGBtoByte(1)).decode()
-  print(data)
+  res=sendCommand("addBlock~"+json.dumps(block)+"~"+address)
+  print(res)
+  print()

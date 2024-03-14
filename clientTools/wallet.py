@@ -11,11 +11,26 @@ class Wallet:
     pub=None
     addr=None
     options={}
+def convertGBtoByte(size):
+  gb = size * (1024 * 1024 * 1024)
+  return gb
 def generateWallet():
     ecdsaPrivateKey = ecdsa.SigningKey.generate(curve=ecdsa.SECP256k1,hashfunc=hashlib.sha3_256)
     pk=ecdsaPrivateKey.to_string().hex()
     return pk
-
+def quackToCoin(quacks):
+  return quacks/(10**8)
+def coinToQuack(coins):
+  return coins*(10**8)
+def sendCommand(command):
+  HOST = "0.0.0.0"  # The server's hostname or IP address
+  PORT = 20024 # The port used by the server
+  s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect((HOST, PORT))
+  s.sendall(command.encode())
+  data = s.recv(convertGBtoByte(1)).decode()
+  s.close()
+  return data
 #SIGNING pk.sign(b"asdfasdfasdfasdfasdfasdfasdfasdf").hex()
 
 def loadWallet(pk):
@@ -51,7 +66,7 @@ def inWallet(walletClass):
             print("Address: "+walletClass.addr)
             print("Public Key: "+walletClass.pub)
         elif command=="send":
-            amount=int(float(input("Amount: "))*(10**8))
+            amount=int(coinToQuack(float(input("Amount: "))))
             to=input("To: ")
             inpamt=int(input("How many inputs? "))
             inputs=""
@@ -62,14 +77,41 @@ def inWallet(walletClass):
               sig=priv.sign(txid.encode()).hex()
               inputs+=f"['{sig}','{txid}',{str(output)}],"
             pub=walletClass.pub
-            HOST = "0.0.0.0"  # The server's hostname or IP address
-            PORT = 20024 # The port used by the server
-            s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((HOST, PORT))
-            s.sendall(f"createTransaction~{pub}~{to}~[{inputs}]~{str(amount)}".encode())
-            data = s.recv(1024).decode()
-            print(data)
-            s.close()
+            data=json.loads(sendCommand(f"createTransaction~{pub}~{to}~[{inputs}]~{str(amount)}"))
+            if data['err']==0:
+              print("Transaction Created")
+            elif data['err']==1:
+              print("Failed TXID Unlock - Verify That you have the correct info submitted and that the transactions locktime has expired.")
+            elif data['err']==2:
+              print("Not enough quack from inputs to fund the transaction")
+            elif data['err']==3:
+              print("This transaction has already been spent")
+            elif data['err']==4:
+              print("Transaction already exists in the memory pool")
+            elif data['err']==5:
+              print("")
+        elif command=="balance":
+          bal=int(sendCommand(f"getBalance~{walletClass.pub}"))
+          print(str(quackToCoin(bal))+" QUACK")
+          print()
+        elif command=="transactions":
+          data=json.loads(sendCommand(f"getTransactionsByPubKey~{walletClass.pub}"))
+          for index in range(len(data)):
+            tx=data[index]
+            print(f"{str(index)} - TXID: {tx['txid']}")
+            print("      OUTPUTS")
+            for output in range(len(tx['outputs'])):
+              out=tx['outputs'][output]
+              print(f"        OUTPUT {str(output)} - TO: {out['scriptPubKey']} - {str(quackToCoin(out['value']))} QUACK")
+            print("      -----------------------------------")
+            print("      INPUTS")
+            for ina in range(len(tx['inputs'])):
+              inp=tx['inputs'][ina]
+              if inp['txid']!="":
+                print(f"        INPUT {str(ina)} - SPENT TX: {inp['txid']}")
+              else:
+                print(f"        INPUT {str(ina)} - SPENT TX: COINBASE")
+          print()
 while True:
     print("Duck Coin Wallet V1.0")
     print()
