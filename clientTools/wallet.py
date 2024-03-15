@@ -92,17 +92,17 @@ def inWallet(walletClass):
             elif data['err']==3:
               print("This transaction has already been spent")
             elif data['err']==4:
-              print("Transaction already exists in the memory pool")
-            elif data['err']==5:
-              print("")
+              print("You cant send quack to yourself.")
         elif command=="balance":
           bal=int(sendCommand(f"getBalance~{walletClass.pub}"))
           print(str(quackToCoin(bal))+" QUACK")
           print()
         elif command=="transactions":
           data=json.loads(sendCommand(f"getTransactionsByPubKey~{walletClass.pub}"))
+          spentunspent=[]
           for index in range(len(data)):
             tx=data[index]
+            spentunspent.append(tx['txid'])
             print(f"{str(index)} - TXID: {tx['txid']}")
             print("      OUTPUTS")
             for output in range(len(tx['outputs'])):
@@ -114,8 +114,14 @@ def inWallet(walletClass):
               inp=tx['inputs'][ina]
               if inp['txid']!="":
                 print(f"        INPUT {str(ina)} - SPENT TX: {inp['txid']}")
+                if inp['txid'] in spentunspent:
+                  spentunspent.remove(inp['txid'])
               else:
                 print(f"        INPUT {str(ina)} - SPENT TX: COINBASE")
+          print("---------------------------------")
+          print("UNSPENT TXS")
+          for tx in spentunspent:
+            print(f" TXID: {tx}")
         elif command=="exit":
             break
         print()

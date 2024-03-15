@@ -41,7 +41,7 @@ def threaded(c):
     elif cmd=="createTransaction":
       # Command: createTransaction, pubKey (senders public key), recipient(reciver hashed pubkey), SigTX(["signature","txID",outputSelect]), amount (amount to send in quacks)
       tx=blockchain.createTransaction(data[1],data[2],ast.literal_eval(data[3]),int(data[4]))
-      if isinstance(tx,int):
+      if type(tx)==type(0):
         c.send(json.dumps({"err":tx}).encode())
       else:
         c.send(json.dumps({"err":0}).encode())

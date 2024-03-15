@@ -87,12 +87,19 @@ def calculate_new_target_hash(old_target_hash, quotient):
 
 def verifyUnspentsGetBalance(txids:list,senderaddr:str,senderPubKey:str):
     blocks=dbManager.fetchAllBlocks()
+    txqueue=dbManager.fetchTransQueue()
     spent=[]
     for block in blocks:
         TXLST=json.loads(block[3])
         for tx in TXLST:
             for inp in tx['inputs']:
-                if inp['txid'] in txids:
+                for txid in txids:
+                    if inp['txid']==txid[0] and inp['out']==txid[1]:
+                      spent.append(inp['txid'])
+    for tx in txqueue:
+        for inp in json.loads(tx[1])['inputs']:
+            for txid in txids:
+                if inp['txid']==txid[0] and inp['out']==txid[1]:
                     spent.append(inp['txid'])
     return [spent]
 
@@ -113,40 +120,24 @@ def verifyTXOwnership(pubKey:str,signature:str,outputSelect:int,txID:str,txJSON)
         return False
     vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(pubKey[2:]), curve=ecdsa.SECP256k1, hashfunc=hashlib.sha3_256)
     return vk.verify(bytes.fromhex(signature), txID.encode())
-def checkIfTxNotInMemPool(txidlist):
-  txs=dbManager.fetchTransQueue()
-  for tx in txs:
-    txdatals=json.loads(tx[1])
-    for txdata in txdatals['inputs']:
-      for txid in txidlist:
-        if txid[0]==txdata['txid']:
-          return False
-        if txid[1]==txdata['out']:
-          return False
-  return False
 def createTransaction(pubKey:str,recipient:str,SigTX:list,amount:int):
     if recipient==generateAddressFromPubkey(pubKey):
         print("[SERVER] You cannot send to yourself")
-        return 6
+        return 4
     txDataList=[]
-    txidList=[]
     txOUTHASHLIST=[]
     for txID in SigTX:
         signature=txID[0]
         output=txID[2]
         txIDS=txID[1]
         txOUTHASHLIST.append([txIDS,output])
-        txidList.append(txID)
         tx=dbManager.fetchTransaction(txIDS)
         txDataList.append([tx,output])
         if not verifyTXOwnership(pubKey,signature,output,txIDS,tx):
             return 1
-    verifyIfOwnerCanSend=verifyUnspentsGetBalance(txids=txidList,senderaddr=generateAddressFromPubkey(pubKey),senderPubKey=pubKey)
+    verifyIfOwnerCanSend=verifyUnspentsGetBalance(txids=txOUTHASHLIST,senderaddr=generateAddressFromPubkey(pubKey),senderPubKey=pubKey)
     if len(verifyIfOwnerCanSend[0])!=0:
-      return 4
-    inMemPool=checkIfTxNotInMemPool(txOUTHASHLIST)
-    if inMemPool:
-      return 5
+      return 3
     inputs=[]
     totalAvalAmount=0
     for tx in txDataList:

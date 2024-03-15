@@ -52,10 +52,10 @@ def fetchTransQueue():
     return txs
 def fetchBlockData(blockID):
     method=None
-    if isinstance(blockID,str):
+    if type(blockID)==type(""):
         method="blockHash"
         blockID=f"'{blockID}'"
-    elif isinstance(blockID,int):
+    elif type(blockID)==type(0):
         method="blockHeight"
         blockID=f"{blockID}"
     else:
