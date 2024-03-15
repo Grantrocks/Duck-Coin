@@ -52,10 +52,10 @@ def fetchTransQueue():
     return txs
 def fetchBlockData(blockID):
     method=None
-    if type(blockID)==type("str"):
+    if isinstance(blockID,str):
         method="blockHash"
         blockID=f"'{blockID}'"
-    elif type(blockID)==type(0):
+    elif isinstance(blockID,int):
         method="blockHeight"
         blockID=f"{blockID}"
     else:
@@ -79,7 +79,6 @@ def fetchTransactionsByPubKey(pubKey,addr):
         if out['scriptPubKey']==addr:
           transactions.append(tx)
           continue
-  print(transactions)
   return transactions
 def removeFromTransQueue(dbIDS):
     con=sqlite3.connect("databases/txqueue.db")

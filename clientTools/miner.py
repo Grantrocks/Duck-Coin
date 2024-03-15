@@ -8,8 +8,8 @@ def convertGBtoByte(size):
 def convertBlockJSON(block):
   return f"{str(block['version'])}{str(block['height'])}{block['last_block_hash']}{block['merkle_root']}{str(block['time'])}{block['target']}"
 def sendCommand(command):
-  HOST = "0.0.0.0"  # The server's hostname or IP address
-  PORT = 20024 # The port used by the server
+  HOST = "127.0.0.1"  # The server's hostname or IP address
+  PORT = 20000 # The port used by the server
   s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.connect((HOST, PORT))
   s.sendall(command.encode())

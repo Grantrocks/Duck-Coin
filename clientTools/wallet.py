@@ -6,6 +6,8 @@ import os
 import codecs
 import socket
 import json
+import signal
+import sys
 class Wallet:
     pk=None
     pub=None
@@ -23,8 +25,8 @@ def quackToCoin(quacks):
 def coinToQuack(coins):
   return coins*(10**8)
 def sendCommand(command):
-  HOST = "0.0.0.0"  # The server's hostname or IP address
-  PORT = 20024 # The port used by the server
+  HOST = "127.0.0.1"  # The server's hostname or IP address
+  PORT = 20000 # The port used by the server
   s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.connect((HOST, PORT))
   s.sendall(command.encode())
@@ -62,6 +64,9 @@ def inWallet(walletClass):
         if command=="help":
             print("Commands")
             print("DETAILS - PRINTS WALLET DETAILS SUCH AS PUBKEY AND ADDRESS")
+            print("SEND - SENDS QUACK TO ANOTHER ADDRESS")
+            print("BALANCE - PRINTS YOUR BALANCE")
+            print("TRANSACTIONS - PRINTS ALL TRANSACTIONS IN YOUR WALLET")
         elif command=="details":
             print("Address: "+walletClass.addr)
             print("Public Key: "+walletClass.pub)
@@ -111,7 +116,13 @@ def inWallet(walletClass):
                 print(f"        INPUT {str(ina)} - SPENT TX: {inp['txid']}")
               else:
                 print(f"        INPUT {str(ina)} - SPENT TX: COINBASE")
-          print()
+        elif command=="exit":
+            break
+        print()
+def signal_handler(sig, frame):
+  print('Closing wallet...')
+  sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
 while True:
     print("Duck Coin Wallet V1.0")
     print()

@@ -5,11 +5,7 @@ import dbManager
 import binascii
 import ecdsa
 import datetime
-import ast
-# Initialization
-print("Initializing node....")
 
-print("Done")
 # Classes
 
 class Block:
@@ -44,7 +40,6 @@ def getBalance(pubKey):
       TXLST=json.loads(block[3])
       for tx in TXLST:
           sending=False
-          print(tx)
           for inp in tx['inputs']:
               if inp['scriptSig']["pubKey"]==pubKey:
                   sending=True
@@ -104,17 +99,17 @@ def verifyUnspentsGetBalance(txids:list,senderaddr:str,senderPubKey:str):
 def verifyTXOwnership(pubKey:str,signature:str,outputSelect:int,txID:str,txJSON):
     transaction=txJSON
     if outputSelect>transaction['outputCount']:
-        print("Selected output is larget than tx output count")
+        print("[SERVER] Selected output is larget than tx output count")
         return False
     blockHeight=len(dbManager.fetchAllBlocks())-1
     if transaction['locktime']>blockHeight:
-        print("Transaction is locked")
+        print("[SERVER] Transaction is locked")
         return False
     output=transaction['outputs'][outputSelect]
     OldPub=output['scriptPubKey']
     newOldPub=generateAddressFromPubkey(pubKey)
     if newOldPub!=OldPub:
-        print("Transaction is not owned by sender")
+        print("[SERVER] Transaction is not owned by sender")
         return False
     vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(pubKey[2:]), curve=ecdsa.SECP256k1, hashfunc=hashlib.sha3_256)
     return vk.verify(bytes.fromhex(signature), txID.encode())
@@ -131,7 +126,7 @@ def checkIfTxNotInMemPool(txidlist):
   return False
 def createTransaction(pubKey:str,recipient:str,SigTX:list,amount:int):
     if recipient==generateAddressFromPubkey(pubKey):
-        print("You cannot send to yourself")
+        print("[SERVER] You cannot send to yourself")
         return 6
     txDataList=[]
     txidList=[]
@@ -227,23 +222,23 @@ def validateBlock(candidate):
     c=candidate['header']
     checkHash=hashlib.sha3_256(hashlib.sha3_256(f"{str(c['version'])}{str(c['height'])}{c['last_block_hash']}{c['merkle_root']}{str(c['time'])}{c['target']}{str(c['nonce'])}".encode()).hexdigest().encode()).hexdigest()
     if candidate['header']['hash']!=checkHash:
-        print("Failed Hash Check")
+        print("[SERVER] Failed Hash Check")
         return False
     targ=int(candidate['header']['target'],16)
     incheck=int(checkHash,16)
     if not incheck<=targ:
-        print("Failed Target Check")
+        print("[SERVER] Failed Target Check")
         return False
     bhs=dbManager.fetchAllBlocks()
     if len(bhs)>0:
       for height in bhs[0]:
         if height==candidate['header']['height']:
-          print("Block already exists")
+          print("[SERVER] Block already exists")
           return False
     if candidate['header']['height']!=0:
         prev=json.loads(dbManager.fetchBlockData(candidate['header']['height']-1)[2])
         if not candidate['header']['time']>prev['time']:
-            print("This block cannot be older that the last block")
+            print("[SERVER] This block cannot be older that the last block")
             return False
     validDBIDS=dbManager.fetchDbIDS()
     validDBIDSF=[]
@@ -263,14 +258,14 @@ def validateBlock(candidate):
       del temptx['locktime']
       sha1Hash=hashlib.sha1(json.dumps(temptx).encode())
       if dbID!=sha1Hash.hexdigest():
-        print("INVALID TRANSACTION ID")
+        print("[SERVER] INVALID TRANSACTION ID")
         return False
       if not sha1Hash.hexdigest() in validDBIDSF:
-        print("Transaction inside block not known")
+        print("[SERVER] Transaction inside block not known")
         return False
     merk=merkle_root_hash(txIDLIST)
     if merk!=candidate['header']['merkle_root']:
-        print("Invalid merkle root")
+        print("[SERVER] Invalid merkle root")
         return False
     return True
 def addBlock(block,nextBlockCreator):

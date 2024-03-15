@@ -6,6 +6,8 @@ import threading
 import blockchain
 import dbManager
 import ast
+import signal
+import sys
 
 def convertGBtoByte(size):
   gb = size * (1024 * 1024 * 1024)
@@ -15,7 +17,7 @@ def threaded(c):
   while True:
     data = c.recv(convertGBtoByte(1))
     if not data:
-      print('Closed Connection')
+      print('[SERVER] Closed Connection')
       break
     data=data.decode().split("~")
     # Handle Messages from client
@@ -39,7 +41,7 @@ def threaded(c):
     elif cmd=="createTransaction":
       # Command: createTransaction, pubKey (senders public key), recipient(reciver hashed pubkey), SigTX(["signature","txID",outputSelect]), amount (amount to send in quacks)
       tx=blockchain.createTransaction(data[1],data[2],ast.literal_eval(data[3]),int(data[4]))
-      if type(tx)==type(0):
+      if isinstance(tx,int):
         c.send(json.dumps({"err":tx}).encode())
       else:
         c.send(json.dumps({"err":0}).encode())
@@ -62,27 +64,27 @@ def threaded(c):
     else:
       c.send("Please specify a command".encode())
   c.close()
-
+def signal_handler(sig, frame):
+  print('You pressed Ctrl+C!')
+  s.close()
+  sys.exit(0)
 
 def Main():
-  host = ""
-  port = 20024 # Specify which port to open
+  host = "127.0.0.1"
+  port = 20000 # Specify which port to open
+  global s
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.bind((host, port))
-  print("socket binded to port", port)
-
   s.listen(5)
-  print("socket is listening")
-
+  print(f"[SERVER] Listening on {(host, port)}")
+  signal.signal(signal.SIGINT, signal_handler)
   while True:
 
     c, addr = s.accept()
 
-    print('Connected to :', addr[0], ':', addr[1])
+    print('[SERVER] Connected to :', addr[0], ':', addr[1])
 
     start_new_thread(threaded, (c,))
-  s.close()
-
 
 if __name__ == '__main__':
   Main()
