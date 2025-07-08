@@ -105,22 +105,24 @@ def inWallet(walletClass):
           spentunspent=[]
           for index in range(len(data)):
             tx=data[index]
+            print(tx["txid"])
             spentunspent.append(tx['txid'])
-            print(f"{str(index)} - TXID: {tx['txid']}")
-            print("      OUTPUTS")
+            #print(f"{str(index)} - TXID: {tx['txid']}")
+            #print("      OUTPUTS")
             for output in range(len(tx['outputs'])):
               out=tx['outputs'][output]
-              print(f"        OUTPUT {str(output)} - TO: {out['scriptPubKey']} - {str(quackToCoin(out['value']))} QUACK")
-            print("      -----------------------------------")
-            print("      INPUTS")
+             # print(f"        OUTPUT {str(output)} - TO: {out['scriptPubKey']} - {str(quackToCoin(out['value']))} QUACK")
+            #print("      -----------------------------------")
+            #print("      INPUTS")
             for ina in range(len(tx['inputs'])):
               inp=tx['inputs'][ina]
               if inp['txid']!="":
-                print(f"        INPUT {str(ina)} - SPENT TX: {inp['txid']}")
+                #print(f"        INPUT {str(ina)} - SPENT TX: {inp['txid']}")
                 if inp['txid'] in spentunspent:
                   spentunspent.remove(inp['txid'])
               else:
-                print(f"        INPUT {str(ina)} - SPENT TX: COINBASE")
+                #print(f"        INPUT {str(ina)} - SPENT TX: COINBASE")
+                pass
           print("---------------------------------")
           print("UNSPENT TXS")
           for tx in spentunspent:
