@@ -8,7 +8,7 @@ def convertGBtoByte(size):
 def convertBlockJSON(block):
   return f"{str(block['version'])}{str(block['height'])}{block['last_block_hash']}{block['merkle_root']}{str(block['time'])}{block['target']}"
 def sendCommand(command):
-  HOST = "raspberrypi.local"  # The server's hostname or IP address
+  HOST = "duckcoin.grantselectronics.com"  # The server's hostname or IP address
   PORT = 20000 # The port used by the server
   s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.connect((HOST, PORT))
