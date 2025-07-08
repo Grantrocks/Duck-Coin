@@ -25,12 +25,14 @@ def quackToCoin(quacks):
 def coinToQuack(coins):
   return coins*(10**8)
 def sendCommand(command):
-  HOST = "127.0.0.1"  # The server's hostname or IP address
+  HOST = "raspberrypi.local"  # The server's hostname or IP address
   PORT = 20000 # The port used by the server
   s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.connect((HOST, PORT))
-  s.sendall(command.encode())
-  data = s.recv(convertGBtoByte(1)).decode()
+  msg_bytes = command.encode()
+  length_prefix = len(msg_bytes).to_bytes(4, 'big')
+  s.sendall(length_prefix+msg_bytes)
+  data=s.recv(convertGBtoByte(1)).decode()
   s.close()
   return data
 #SIGNING pk.sign(b"asdfasdfasdfasdfasdfasdfasdfasdf").hex()
