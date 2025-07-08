@@ -236,7 +236,9 @@ def validateBlock(candidate):
     for dbv in validDBIDS:
       validDBIDSF.append(dbv[0])
     txIDLIST=[]
-    candidate['transactions']=json.loads(candidate['transactions'])
+    print()
+    print(candidate['transactions'])
+    print()
     for tx in range(len(candidate['transactions'])):
       jsondata=candidate['transactions']
       txd=jsondata[tx]

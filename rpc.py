@@ -12,15 +12,44 @@ import sys
 def convertGBtoByte(size):
   gb = size * (1024 * 1024 * 1024)
   return gb
+
+
+def recv_all(sock, n):
+    """Read exactly n bytes from the socket."""
+    data = b''
+    while len(data) < n:
+        part = sock.recv(n - len(data))
+        print(part)
+        if not part:
+            raise ConnectionError("Socket closed before receiving expected data")
+        data += part
+    return data
+
+def recv_with_length(sock):
+    # Step 1: Get the 4-byte length header
+    raw_length = recv_all(sock, 4)
+    message_length = int.from_bytes(raw_length, 'big')
+
+    # Step 2: Receive the full message
+    return recv_all(sock, message_length)
+
+
 # thread function
 def threaded(c):
   while True:
-    data = c.recv(convertGBtoByte(1))
-    if not data:
-      print('[SERVER] Closed Connection')
-      break
+    try:
+       data = recv_with_length(c)
+       print(data.decode())  # or parse it if it's JSON, etc.
+    except ConnectionError as e:
+       print(f"Error: {e}")
+       c.close()
+       break
+    print(data)
+    print()
     data=data.decode().split("~")
     # Handle Messages from client
+    print(data)
+    print()
     cmd=data[0]
     if cmd=="PING":
       # Command: PING
@@ -52,7 +81,10 @@ def threaded(c):
       c.send(block.encode())
     elif cmd=="addBlock":
       # Command: addBlock, hash, nonce, nextBlockCreator
+      print(data[1])
       block=json.loads(data[1])
+      print("")
+      print(block)
       nextBlockCreator=data[2]
       added=blockchain.addBlock(block,nextBlockCreator)
       if not added:
@@ -71,7 +103,7 @@ def signal_handler(sig, frame):
   sys.exit(0)
 
 def Main():
-  host = "127.0.0.1"
+  host = "0.0.0.0"
   port = 20000 # Specify which port to open
   global s
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
