@@ -39,7 +39,6 @@ def threaded(c):
     data = recv_with_length(c)
     data=data.decode().split("~")
     # Handle Messages from client
-    print(data)
     cmd=data[0]
     if cmd=="PING":
       # Command: PING

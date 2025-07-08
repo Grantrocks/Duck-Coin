@@ -40,7 +40,6 @@ def sendCommand(command):
 def loadWallet(pk):
     pk=ecdsa.SigningKey.from_string(bytes().fromhex(pk),curve=ecdsa.SECP256k1,hashfunc=hashlib.sha3_256)
     ecdsaPublicKey = "10" +pk.get_verifying_key().to_string().hex()
-
     hash256FromECDSAPublicKey = hashlib.sha3_256(binascii.unhexlify(ecdsaPublicKey)).hexdigest()
     ridemp160FromHash256 = hashlib.new('ripemd160', binascii.unhexlify(hash256FromECDSAPublicKey))
     prependNetworkByte = '17' + ridemp160FromHash256.hexdigest()
@@ -101,28 +100,25 @@ def inWallet(walletClass):
           print()
         elif command=="transactions":
           data=json.loads(sendCommand(f"getTransactionsByPubKey~{walletClass.pub}"))
-          print(data)
           spentunspent=[]
           for index in range(len(data)):
             tx=data[index]
-            print(tx["txid"])
             spentunspent.append(tx['txid'])
-            #print(f"{str(index)} - TXID: {tx['txid']}")
-            #print("      OUTPUTS")
+            print(f"{str(index)} - TXID: {tx['txid']}")
+            print("      OUTPUTS")
             for output in range(len(tx['outputs'])):
               out=tx['outputs'][output]
-             # print(f"        OUTPUT {str(output)} - TO: {out['scriptPubKey']} - {str(quackToCoin(out['value']))} QUACK")
-            #print("      -----------------------------------")
-            #print("      INPUTS")
+              print(f"        OUTPUT {str(output)} - TO: {out['scriptPubKey']} - {str(quackToCoin(out['value']))} QUACK")
+            print("      -----------------------------------")
+            print("      INPUTS")
             for ina in range(len(tx['inputs'])):
               inp=tx['inputs'][ina]
               if inp['txid']!="":
-                #print(f"        INPUT {str(ina)} - SPENT TX: {inp['txid']}")
+                print(f"        INPUT {str(ina)} - SPENT TX: {inp['txid']}")
                 if inp['txid'] in spentunspent:
                   spentunspent.remove(inp['txid'])
               else:
-                #print(f"        INPUT {str(ina)} - SPENT TX: COINBASE")
-                pass
+                print(f"        INPUT {str(ina)} - SPENT TX: COINBASE")
           print("---------------------------------")
           print("UNSPENT TXS")
           for tx in spentunspent:
