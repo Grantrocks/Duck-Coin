@@ -48,6 +48,7 @@ def threaded(c):
     elif cmd=="getCandidateBlock":
       #Command: getCandidateBlock, creator (your address)
       block=json.dumps(blockchain.createBlock(data[1]))
+      print(block)
       c.send(block.encode())
     elif cmd=="addBlock":
       # Command: addBlock, hash, nonce, nextBlockCreator

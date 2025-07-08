@@ -207,7 +207,7 @@ def createBlock(blockCreator):
             "time":datetime.datetime.now().timestamp(),
             "target":target
         }
-    block=Block(header,json.dumps(transactions),dbIDS)
+    block=Block(header,transactions,dbIDS)
     return vars(block)
 def validateBlock(candidate):
     c=candidate['header']
