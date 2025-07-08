@@ -101,6 +101,7 @@ def inWallet(walletClass):
           print()
         elif command=="transactions":
           data=json.loads(sendCommand(f"getTransactionsByPubKey~{walletClass.pub}"))
+          print(data)
           spentunspent=[]
           for index in range(len(data)):
             tx=data[index]

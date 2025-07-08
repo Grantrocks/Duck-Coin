@@ -20,7 +20,7 @@ def recv_all(sock, n):
     while len(data) < n:
         part = sock.recv(n - len(data))
         if not part:
-            raise ConnectionError("Socket closed before receiving expected data")
+            break
         data += part
     return data
 
@@ -36,19 +36,10 @@ def recv_with_length(sock):
 # thread function
 def threaded(c):
   while True:
-    try:
-       data = recv_with_length(c)
-       print(data.decode())  # or parse it if it's JSON, etc.
-    except ConnectionError as e:
-       print(f"Error: {e}")
-       c.close()
-       break
-    print(data)
-    print()
+    data = recv_with_length(c)
     data=data.decode().split("~")
     # Handle Messages from client
     print(data)
-    print()
     cmd=data[0]
     if cmd=="PING":
       # Command: PING
