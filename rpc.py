@@ -19,7 +19,6 @@ def recv_all(sock, n):
     data = b''
     while len(data) < n:
         part = sock.recv(n - len(data))
-        print(part)
         if not part:
             raise ConnectionError("Socket closed before receiving expected data")
         data += part
