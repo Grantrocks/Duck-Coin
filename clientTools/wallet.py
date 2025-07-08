@@ -25,7 +25,7 @@ def quackToCoin(quacks):
 def coinToQuack(coins):
   return coins*(10**8)
 def sendCommand(command):
-  HOST = "duckcoin.grantselectronics.com"  # The server's hostname or IP address
+  HOST = "35.188.59.204"  # The server's hostname or IP address
   PORT = 20000 # The port used by the server
   s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.connect((HOST, PORT))
