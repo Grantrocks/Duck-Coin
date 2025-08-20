@@ -1,5 +1,0 @@
-0=No error, just want to make sure all var types are sent the same
-1=Failed TXID Unlock - Verify That you have the correct info submitted and that the transactions locktime has expired.
-2=Not enought balance available.
-3=This transaction has already been spent
-4=You cannot send quack to yourself

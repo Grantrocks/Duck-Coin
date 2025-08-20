@@ -1,5 +1,0 @@
-PING - Pings the node and the node will respond with PONG as fast as possible | PING
-fetchBlock - Fetches the specified block data | fetchBlock BLOCKHASH
-fetchTransaction - Fetches the specified transaciton data | fetchTransaction TRANSACTION
-createTransaction - Creates Transaction JSON data and broadcasts it to the network | createTransaction PUBKEY, RECIPIENT, SIGTX, AMOUNT
-getCandidateBlock - Fetches the candidate block and/or generates one if needed | getCandidateBlock CREATORADDR

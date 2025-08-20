@@ -1,5 +1,0 @@
-{
-    "txid":"output transaciton id to unlock",
-    "out":"choose which output to use",
-    "scriptSig":{"pubKey":"","signature":""}
-}
