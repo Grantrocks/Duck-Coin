@@ -8,7 +8,7 @@ import node
 # =========================
 # Configuration
 # =========================
-NUM_THREADS = 8        # How many threads to run
+NUM_THREADS = 9        # How many threads to run
 #block="{\"version\": 0, \"previousBlock\": \"Thedateis8/1/2025,imonvacationinhawaiiandjustafewdaysagotherewasatsunamithathitus.Wewerehikinginthemountainsandonthewaybackwegotabunchofwarningsaboutthetsunamionourphones.Itsenttheentireislandintocompletechaosandscaredeveryone.Crazyshit.\", \"merkleRoot\": \"12402ced31507a714e79047650c6d57ea0002b935015bf920f8cdac7f309cbce\", \"tips\": 0, \"timeStamp\": 1754120149.341011, \"hash\": \"00000dee7cfbca5f108df853ce978c80a69cf89f4a2335243a49c948cabb956d\", \"nonce\": 156250, \"target\": \"0000000f00000000000000000000000000000000000000000000000000000000\", \"transactionCount\": 1, \"transactions\": [{\"version\": 0, \"txid\": \"12402ced31507a714e79047650c6d57ea0002b935015bf920f8cdac7f309cbce\", \"inputs\": [{\"txid\": \"0000000000000000000000000000000000000000000000000000000000000000\", \"vout\": 0, \"scriptSig\": \"coinbase\"}], \"outputs\": [{\"value\": 3000000000, \"scriptPubKeyHash\": \"DBGoWEXyVbydE235VJYoYkvE3cMniJyobm\"}], \"inputCount\": 1, \"outputCount\": 1, \"timeStamp\": 1754120149.339984, \"tip\": 0}]}"
 #f=open("candidate.txt","r")
 #block=json.load(f)
